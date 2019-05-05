@@ -57,12 +57,12 @@ export default {
 
   screen: css`
     margin: 1.6rem 0;
-    max-width: 70rem;
   `,
 
   postGenerator: css`
     display: flex;
     flex-direction: column;
+    max-width: 72rem;
   `,
 
   formField: css`
@@ -92,6 +92,10 @@ export default {
     align-items: flex-start;
   `,
 
+  userDatabase: css`
+    max-width: 72rem;
+  `,
+
   updateUsersForm: css`
     display: flex;
     flex-direction: column;
@@ -116,22 +120,6 @@ export default {
       overflow: hidden;
       position: absolute;
       z-index: -1;
-    }
-  `,
-
-  cropper: css`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    button {
-      display: inline-block;
-      margin-top: 0.8rem;
-
-      &:disabled {
-        background-color: #eee;
-        color: #999;
-      }
     }
   `,
 
@@ -187,25 +175,36 @@ export default {
     }
   `,
 
-  select: css`
-    ${button};
-    margin: 0.8rem 0;
-  `,
-
-  downloadLink: css`
-    ${button};
-    margin-left: 1.6rem;
-    text-decoration: none;
-  `,
-
-  actions: css`
+  split: css`
     display: flex;
-    width: 100%;
-    align-items: flex-end;
-    justify-content: space-between;
+  `,
+
+  cropper: css`
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 614px;
+    margin-right: 1.6rem;
+
+    button {
+      display: inline-block;
+      margin-top: 0.8rem;
+
+      &:disabled {
+        background-color: #eee;
+        color: #999;
+      }
+    }
+  `,
+
+  outputs: css`
+    flex: 1;
+    min-width: 614px;
   `,
 
   output: css`
+    display: inline-block;
     margin-bottom: 1.6rem;
   `,
 }

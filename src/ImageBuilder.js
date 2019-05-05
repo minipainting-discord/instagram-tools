@@ -10,11 +10,10 @@ const T = styles.tags(styled => ({
   ImageBuilder: styled.div(styles.imageBuilder),
   Cropper: styled.div(styles.cropper),
   Uploader: styled.div(styles.uploader),
-  DownloadLink: styled.a(styles.downloadLink),
-  Actions: styled.div(styles.actions),
   Picker: styled.div(styles.picker),
   Radio: styled.div(styles.radio),
-  Select: styled.select(styles.select),
+  Split: styled.div(styles.split),
+  Outputs: styled.div(styles.outputs),
   Output: styled.a(styles.output),
 }))
 
@@ -150,7 +149,7 @@ class ImageBuilder extends React.Component {
   topRef = React.createRef()
 
   async componentDidUpdate() {
-    if (this.state.step < 3) {
+    if (this.state.step < 2) {
       return
     }
 
@@ -193,11 +192,10 @@ class ImageBuilder extends React.Component {
               postType={POST_TYPE[postType]}
               images={images}
               crops={crops}
+              canvases={canvases}
               onUpdateCrop={this.onUpdateCrop}
-              onNextStep={this.onSetStep(3)}
             />
           ),
-          () => <ResultStep canvases={canvases} />,
         ][step]()}
       </T.ImageBuilder>
     )
@@ -260,33 +258,7 @@ function UploadStep({ postType, uploads, onChooseFiles, onNextStep }) {
   )
 }
 
-function CropStep({ postType, images, crops, onUpdateCrop, onNextStep }) {
-  return (
-    <T.Cropper>
-      {images.map((image, index) => (
-        <React.Fragment key={image.file.name}>
-          <h3>{image.file.name}</h3>
-          <ReactCrop
-            imageStyle={{ width: "614px" }}
-            src={image.dataURL}
-            crop={crops[index]}
-            onChange={onUpdateCrop(index)}
-          />
-        </React.Fragment>
-      ))}
-      <T.Actions>
-        <button
-          onClick={onNextStep}
-          disabled={crops.some(crop => !crop.width || !crop.height)}
-        >
-          Confirm cropping
-        </button>
-      </T.Actions>
-    </T.Cropper>
-  )
-}
-
-function ResultStep({ canvases }) {
+function CropStep({ postType, images, canvases, crops, onUpdateCrop }) {
   const now = +new Date()
 
   const onDownload = ref => ev => {
@@ -296,39 +268,61 @@ function ResultStep({ canvases }) {
   }
 
   return (
-    <T.Picker>
-      {canvases.map((ref, index) => (
-        <T.Output
-          key={index}
-          href={`#output-canvas-${index}`}
-          onClick={onDownload(ref)}
-          download={`minipainting-${now}-${index}.jpeg`}
-        >
-          <canvas
-            id={`output-canvas-${index}`}
-            ref={ref}
-            width="614"
-            height="614"
-          />
-        </T.Output>
-      ))}
-    </T.Picker>
+    <T.Split>
+      <T.Cropper>
+        {images.map((image, index) => (
+          <React.Fragment key={image.file.name}>
+            <h3>{image.file.name}</h3>
+            <ReactCrop
+              imageStyle={{ width: "614px" }}
+              src={image.dataURL}
+              crop={crops[index]}
+              onChange={onUpdateCrop(index)}
+            />
+          </React.Fragment>
+        ))}
+      </T.Cropper>
+      <T.Outputs>
+        {canvases.map((ref, index) => (
+          <T.Output
+            key={index}
+            href={`#output-canvas-${index}`}
+            onClick={onDownload(ref)}
+            download={`minipainting-${now}-${index}.jpeg`}
+          >
+            <canvas
+              id={`output-canvas-${index}`}
+              ref={ref}
+              width="614"
+              height="614"
+            />
+          </T.Output>
+        ))}
+      </T.Outputs>
+    </T.Split>
   )
 }
 
 function loadImage(src) {
   return new Promise(resolve => {
+    if (src in loadImage.__cache__) {
+      return resolve(loadImage.__cache__[src])
+    }
+
     const image = new Image()
     image.onload = () => {
       image.width = 614
       image.height = image.height * (image.width / image.naturalWidth) // Keep Y ratio
       image.scaleX = image.naturalWidth / image.width
       image.scaleY = image.naturalHeight / image.height
+      loadImage.__cache__[src] = image
       resolve(image)
     }
     image.src = src
   })
 }
+
+loadImage.__cache__ = {}
 
 async function drawSoloImages(images, crops, canvases) {
   const crop = crops[0]
@@ -341,7 +335,7 @@ async function drawSoloImages(images, crops, canvases) {
 }
 
 async function drawChallengeBeforeAfter(images, crops, canvases) {
-  const { required, imgW, imgH, positions } = POST_TYPE.CHALLENGE_BEFORE_AFTER
+  const { imgW, imgH, positions } = POST_TYPE.CHALLENGE_BEFORE_AFTER
   const canvas = canvases[0].current
   const ctx = canvas.getContext("2d")
 
