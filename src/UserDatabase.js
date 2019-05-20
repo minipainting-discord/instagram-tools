@@ -36,7 +36,10 @@ class UserDatabase extends React.Component {
         .reduce(
           (users, user) => [
             ...users,
-            { discordName: user[0], igHandle: "@" + user[3].split("/")[3] },
+            {
+              discordName: user[0],
+              igHandle: "@" + user[3].match(/instagram\.com\/([^\/]+)\/?/)[1],
+            },
           ],
           [],
         )
