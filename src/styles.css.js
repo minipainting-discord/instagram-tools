@@ -3,6 +3,7 @@ import styled from "@emotion/styled/macro"
 
 const c = {
   blue: "#08f",
+  lightblue: "#0af",
 }
 
 const noSpacing = css`
@@ -22,6 +23,10 @@ const button = css`
 
   &:disabled {
     background-color: #888;
+  }
+
+  &:focus {
+    background-color: ${c.lightblue};
   }
 `
 
