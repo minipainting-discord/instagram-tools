@@ -136,12 +136,6 @@ const POST_TYPE = {
       { x: 467, y: 282 },
     ],
   },
-  CHALLENGE: {
-    name: "Challenge",
-    required: 1,
-    outputs: 1,
-    disabled: true,
-  },
   CHALLENGE_BEFORE_AFTER: {
     name: "Challenge (Before/After)",
     required: 2,
