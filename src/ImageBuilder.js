@@ -2,6 +2,8 @@ import React from "react"
 import ReactCrop from "react-image-crop"
 import throttle from "lodash/throttle"
 
+import config from "./ImageBuilder.config.js"
+
 import OVERLAYS from "./overlays"
 
 import { Icon } from "./ui"
@@ -18,133 +20,7 @@ const T = styles.tags(styled => ({
   Output: styled.a(styles.output),
 }))
 
-const POST_TYPE = {
-  SOLO: {
-    name: "Single",
-    required: 1,
-    outputs: 3,
-  },
-  PAINT_ALONG_2: {
-    family: "paint-along",
-    name: "Paint Along (2)",
-    required: 2,
-    outputs: 3,
-    recropW: 1 / 2,
-    recropX: 1 / 4,
-    imgW: 285,
-    imgH: 513,
-    positions: [{ x: 14, y: 17 }, { x: 315, y: 17 }],
-  },
-  PAINT_ALONG_3: {
-    family: "paint-along",
-    name: "Paint Along (3)",
-    required: 3,
-    outputs: 4,
-    recropW: 1 / 3,
-    recropX: 1 / 3,
-    imgW: 184,
-    imgH: 513,
-    positions: [{ x: 14, y: 17 }, { x: 215, y: 17 }, { x: 416, y: 17 }],
-  },
-  PAINT_ALONG_4: {
-    family: "paint-along",
-    name: "Paint Along (4)",
-    required: 4,
-    outputs: 5,
-    recropW: 1,
-    recropX: 0,
-    imgW: 285,
-    imgH: 250,
-    positions: [
-      { x: 14, y: 17 },
-      { x: 315, y: 17 },
-      { x: 14, y: 282 },
-      { x: 315, y: 282 },
-    ],
-  },
-  PAINT_ALONG_5: {
-    family: "paint-along",
-    name: "Paint Along (5)",
-    required: 5,
-    outputs: 6,
-    recropW: 4 / 6,
-    recropX: 1 / 6,
-    imgW: 184,
-    imgH: 250,
-    positions: [
-      { x: 14, y: 17 },
-      { x: 215, y: 17 },
-      { x: 416, y: 17 },
-      { x: 14, y: 282 },
-      { x: 215, y: 282 },
-    ],
-  },
-  PAINT_ALONG_6: {
-    family: "paint-along",
-    name: "Paint Along (6)",
-    required: 6,
-    outputs: 7,
-    recropW: 4 / 6,
-    recropX: 1 / 6,
-    imgW: 184,
-    imgH: 250,
-    positions: [
-      { x: 14, y: 17 },
-      { x: 215, y: 17 },
-      { x: 416, y: 17 },
-      { x: 14, y: 282 },
-      { x: 215, y: 282 },
-      { x: 416, y: 282 },
-    ],
-  },
-  PAINT_ALONG_7: {
-    family: "paint-along",
-    name: "Paint Along (7)",
-    required: 7,
-    outputs: 8,
-    recropW: 1 / 2,
-    recropX: 1 / 4,
-    imgW: 135,
-    imgH: 251,
-    positions: [
-      { x: 14, y: 17 },
-      { x: 166, y: 17 },
-      { x: 317, y: 17 },
-      { x: 467, y: 17 },
-      { x: 14, y: 282 },
-      { x: 166, y: 282 },
-      { x: 317, y: 282 },
-    ],
-  },
-  PAINT_ALONG_8: {
-    family: "paint-along",
-    name: "Paint Along (8)",
-    required: 8,
-    outputs: 9,
-    recropW: 1 / 2,
-    recropX: 1 / 4,
-    imgW: 135,
-    imgH: 251,
-    positions: [
-      { x: 14, y: 17 },
-      { x: 166, y: 17 },
-      { x: 317, y: 17 },
-      { x: 467, y: 17 },
-      { x: 14, y: 282 },
-      { x: 166, y: 282 },
-      { x: 317, y: 282 },
-      { x: 467, y: 282 },
-    ],
-  },
-  CHALLENGE_BEFORE_AFTER: {
-    name: "Challenge (Before/After)",
-    required: 2,
-    outputs: 1,
-    imgW: 286,
-    imgH: 513,
-    positions: [{ x: 14, y: 17 }, { x: 315, y: 17 }],
-  },
-}
+const POST_TYPE = config
 
 const PAINT_ALONG_POST_TYPES = Object.values(POST_TYPE).filter(
   type => type.family === "paint-along",
@@ -159,17 +35,6 @@ class ImageBuilder extends React.Component {
     crops: [],
     canvases: [],
   }
-
-  // constructor(props) {
-  //   super(props)
-  //   const img1 = { file: "", dataURL: "" }
-  //   const img2 = { file: "", dataURL: "" }
-  //   const images = [img1, img2]
-  //
-  //   this.state.images = images
-  //   this.state.crops = images.map(image => ({ aspect: 1 / 1 }))
-  //   this.state.canvases = Array.from({ length: 3 }, () => React.createRef())
-  // }
 
   onSetStep = step => () =>
     this.setState({ step }, () => this.topRef.current.scrollIntoView())
@@ -454,8 +319,7 @@ async function drawPaintAlongImages(postType, images, crops, canvases) {
 }
 
 async function drawPaintAlongCover(postType, images, crops, canvas) {
-  const { required, recropW, recropX, imgW, imgH, positions } = postType
-  const overlay = `paintAlong${required}`
+  const { overlay, recropW, recropX, imgW, imgH, positions } = postType
   const ctx = canvas.getContext("2d")
 
   images.forEach(async (source, index) => {
