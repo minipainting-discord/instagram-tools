@@ -1,7 +1,6 @@
 import React from "react"
 import styles from "./styles.css"
 
-import db from "./db"
 import PostGenerator from "./PostGenerator"
 import ImageBuilder from "./ImageBuilder"
 import UserDatabase from "./UserDatabase"
@@ -53,10 +52,16 @@ class App extends React.Component {
     })
 
   componentDidMount() {
-    db.onUpdate(users => {
-      this.setState({ users })
-    })
-    db.load()
+    fetch("/users.json")
+      .then(r => r.json())
+      .then(users =>
+        this.setState({
+          users: users.map(u => ({
+            ...u,
+            igHandle: "@" + u.igUrl.match(/instagram\.com\/([^/]+)\/?/)[1],
+          })),
+        }),
+      )
   }
 
   render() {
