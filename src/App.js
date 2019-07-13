@@ -1,4 +1,5 @@
 import React from "react"
+import { Global as GlobalStyles } from "@emotion/core"
 import styles from "./styles.css"
 
 import PostGenerator from "./PostGenerator"
@@ -69,6 +70,7 @@ class App extends React.Component {
 
     return (
       <T.App>
+        <GlobalStyles styles={styles.globalStyles} />
         <T.Tabs>
           {App.TABS.map(({ url, label }) => (
             <T.Tab

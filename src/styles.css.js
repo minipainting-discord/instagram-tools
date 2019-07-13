@@ -4,6 +4,9 @@ import styled from "@emotion/styled/macro"
 const c = {
   blue: "#08f",
   lightblue: "#0af",
+  darkgray: "#333",
+  gray: "#888",
+  lightgray: "#eee",
 }
 
 const noSpacing = css`
@@ -22,7 +25,7 @@ const button = css`
   border: none;
 
   &:disabled {
-    background-color: #888;
+    background-color: ${c.gray};
   }
 
   &:focus {
@@ -35,10 +38,23 @@ export default {
     return builder(styled)
   },
 
+  globalStyles: css`
+    html,
+    body,
+    #root {
+      height: 100%;
+      overflow: hidden;
+    }
+  `,
+
   app: css`
     font-size: 1.6rem;
-    margin: 3.2rem;
-    color: #333;
+    color: ${c.darkgray};
+    background-color: white;
+    overflow: auto;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
 
     button {
       ${button};
@@ -49,25 +65,30 @@ export default {
     ${noSpacing};
     display: flex;
     list-style-type: none;
+    padding: 3.2rem 3.2rem 0;
   `,
 
   tab: ({ active }) => css`
     padding: 0.8rem 1.2rem;
-    border: 1px solid #888;
+    border: 1px solid ${c.gray};
     margin-left: -1px;
-    background-color: ${active ? "#888" : "transparent"};
+    background-color: ${active ? c.gray : "transparent"};
     color: ${active ? "white" : "inherit"};
     cursor: pointer;
   `,
 
   screen: css`
-    margin: 1.6rem 0;
+    flex: 1;
+    overflow: auto;
+    margin: 1.6rem 0 0;
+    padding: 0 3.2rem 3.2rem;
   `,
 
   postGenerator: css`
     display: flex;
     flex-direction: column;
     max-width: 72rem;
+    padding-bottom: 3.2rem;
   `,
 
   formField: css`
@@ -92,21 +113,50 @@ export default {
   `,
 
   imageBuilder: css`
+    overflow: auto;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    padding-bottom: 3.2rem;
   `,
 
   userDatabase: css`
     max-width: 72rem;
+    padding-bottom: 3.2rem;
   `,
 
-  updateUsersForm: css`
-    display: flex;
-    flex-direction: column;
-    textarea {
+  userList: css`
+    table {
       width: 100%;
-      height: 6em;
+      border: 1px solid ${c.gray};
+    }
+
+    td,
+    th {
+      padding: 0.8rem 1.2rem;
+      border-left: 1px solid ${c.gray};
+      border-right: 1px solid ${c.gray};
+    }
+
+    th {
+      background-color: ${c.lightgray};
+      border: 1px solid ${c.gray};
+      width: 50%;
+    }
+
+    tr:nth-child(even) {
+      background-color: ${c.lightgray};
+    }
+  `,
+
+  userSearchBox: css`
+    display: flex;
+    margin: 0 0 1.6rem;
+    align-items: center;
+
+    input {
+      margin-left: 0.8rem;
+      flex: 1;
     }
   `,
 
