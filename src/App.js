@@ -52,7 +52,7 @@ class App extends React.Component {
     })
 
   componentDidMount() {
-    fetch("/users.json")
+    fetch("users.json")
       .then(r => r.json())
       .then(users =>
         this.setState({
