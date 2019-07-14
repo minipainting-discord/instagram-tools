@@ -10,7 +10,7 @@ import { Icon } from "./ui"
 import styles from "./styles.css"
 
 const T = styles.tags(styled => ({
-  ImageBuilder: styled.div(styles.imageBuilder),
+  ImageBuilder: styled.div(styles.screen),
   Cropper: styled.div(styles.cropper),
   Uploader: styled.div(styles.uploader),
   Picker: styled.div(styles.picker),
@@ -59,15 +59,26 @@ class ImageBuilder extends React.Component {
               reader.readAsDataURL(file)
             }),
         ),
-      ).then(images => {
-        this.setState({
-          images,
-          crops: images.map(image => ({ aspect: 1 / 1 })),
-          canvases: Array.from({ length: postType.outputs }, () =>
-            React.createRef(),
-          ),
+      )
+        .then(async images => {
+          const loadedImages = await Promise.all(
+            images.map(i => loadImage(i.dataURL)),
+          )
+          loadedImages.forEach((image, index) => {
+            image.file = images[index].file
+          })
+
+          return loadedImages
         })
-      })
+        .then(images => {
+          this.setState({
+            images,
+            crops: images.map(image => ({ aspect: 1 / 1 })),
+            canvases: Array.from({ length: postType.outputs }, () =>
+              React.createRef(),
+            ),
+          })
+        })
     })
   }
 
@@ -106,8 +117,7 @@ class ImageBuilder extends React.Component {
     const { step, postType, uploads, images, crops, canvases } = this.state
 
     return (
-      <T.ImageBuilder>
-        <h2 ref={this.topRef}>Image builder</h2>
+      <T.ImageBuilder ref={this.topRef}>
         {[
           () => (
             <PostTypeStep
@@ -143,7 +153,7 @@ function PostTypeStep({ postType, onChangeType, onNextStep }) {
   return (
     <form>
       <T.Picker>
-        <p>Choose album type</p>
+        <h2>Choose album type</h2>
         {Object.keys(POST_TYPE).map(key => (
           <T.Radio key={key}>
             <input
@@ -169,7 +179,7 @@ function PostTypeStep({ postType, onChangeType, onNextStep }) {
 function UploadStep({ postType, uploads, onChooseFiles, onNextStep }) {
   return (
     <T.Uploader>
-      <p>Select {postType.required} images</p>
+      <h2>Select {postType.required} images</h2>
       <label htmlFor="picture">
         <Icon name="image-inverted" />
         Choose picture{postType.required === 1 ? "" : "s"}
@@ -207,17 +217,28 @@ function CropStep({ postType, images, canvases, crops, onUpdateCrop }) {
   return (
     <T.Split>
       <T.Cropper>
-        {images.map((image, index) => (
-          <React.Fragment key={image.file.name}>
-            <h3>{image.file.name}</h3>
-            <ReactCrop
-              imageStyle={{ width: "614px" }}
-              src={image.dataURL}
-              crop={crops[index]}
-              onChange={onUpdateCrop(index)}
-            />
-          </React.Fragment>
-        ))}
+        {images.map((image, index) => {
+          const w = "614px"
+          const h = image.height + "px"
+          return (
+            <React.Fragment key={image.file.name}>
+              <h3>{image.file.name}</h3>
+              <ReactCrop
+                style={{
+                  minWidth: w,
+                  minHeight: h,
+                  maxWidth: w,
+                  maxHeight: h,
+                  width: w,
+                  height: h,
+                }}
+                src={image.src}
+                crop={crops[index]}
+                onChange={onUpdateCrop(index)}
+              />
+            </React.Fragment>
+          )
+        })}
       </T.Cropper>
       <T.Outputs>
         {canvases.map((ref, index) => (
@@ -263,7 +284,7 @@ loadImage.__cache__ = {}
 
 async function drawSoloImages(images, crops, canvases) {
   const crop = crops[0]
-  const image = await loadImage(images[0].dataURL)
+  const image = images[0]
   const overlays = ["soloBlack", "soloGray", "soloWhite"]
 
   overlays.forEach(async (overlay, index) => {
@@ -276,8 +297,7 @@ async function drawChallengeBeforeAfter(images, crops, canvases) {
   const canvas = canvases[0].current
   const ctx = canvas.getContext("2d")
 
-  images.forEach(async (source, index) => {
-    const image = await loadImage(source.dataURL)
+  images.forEach(async (image, index) => {
     const crop = crops[index]
     const pos = positions[index]
     const newCrop = {
@@ -303,9 +323,7 @@ async function drawChallengeBeforeAfter(images, crops, canvases) {
 }
 
 async function drawPaintAlongImages(postType, images, crops, canvases) {
-  images.map(async (source, index) => {
-    const image = await loadImage(source.dataURL)
-
+  images.map(async (image, index) => {
     // Draw the individual image
     await drawImageWithOverlay(
       image,
@@ -322,8 +340,7 @@ async function drawPaintAlongCover(postType, images, crops, canvas) {
   const { overlay, recropW, recropX, imgW, imgH, positions } = postType
   const ctx = canvas.getContext("2d")
 
-  images.forEach(async (source, index) => {
-    const image = await loadImage(source.dataURL)
+  images.forEach(async (image, index) => {
     const crop = crops[index]
     const pos = positions[index]
     const newCrop = {

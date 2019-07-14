@@ -16,7 +16,6 @@ const T = styles.tags(styled => ({
   App: styled.div(styles.app),
   Tabs: styled.ul(styles.tabs),
   Tab: styled.li(styles.tab),
-  Screen: styled.section(styles.screen),
 }))
 
 export const AppContext = React.createContext({ users: [] })
@@ -83,12 +82,10 @@ class App extends React.Component {
           ))}
         </T.Tabs>
         <AppContext.Provider value={{ users }}>
-          <T.Screen>
-            {App.TABS.map(
-              ({ url, Component }) =>
-                currentTab === url && <Component key={url} />,
-            )}
-          </T.Screen>
+          {App.TABS.map(
+            ({ url, Component }) =>
+              currentTab === url && <Component key={url} />,
+          )}
         </AppContext.Provider>
       </T.App>
     )

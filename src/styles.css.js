@@ -63,37 +63,42 @@ export default {
 
   tabs: css`
     ${noSpacing};
+    background-color: ${c.blue};
     display: flex;
     list-style-type: none;
-    padding: 3.2rem 3.2rem 0;
+    padding: 3.2rem 3.2rem 1.6rem;
   `,
 
   tab: ({ active }) => css`
     padding: 0.8rem 1.2rem;
-    border: 1px solid ${c.gray};
+    font-size: 2rem;
     margin-left: -1px;
-    background-color: ${active ? c.gray : "transparent"};
-    color: ${active ? "white" : "inherit"};
+    background-color: ${active ? "white" : "transparent"};
+    border-radius: 5px;
+    color: ${active ? c.darkgray : "white"};
     cursor: pointer;
+    margin-right: 0.8rem;
+
+    &:hover {
+      background-color: ${active ? "white" : c.lightblue};
+    }
   `,
 
   screen: css`
     flex: 1;
     overflow: auto;
-    margin: 1.6rem 0 0;
-    padding: 0 3.2rem 3.2rem;
-  `,
-
-  postGenerator: css`
     display: flex;
     flex-direction: column;
-    max-width: 72rem;
-    padding-bottom: 3.2rem;
+    align-items: flex-start;
+    padding: 1.6rem 3.2rem 3.2rem;
+    width: 100%;
   `,
 
+  /* Post generator */
   formField: css`
     display: flex;
     width: 100%;
+    max-width: 72rem;
     flex-direction: column;
     margin: 0 0 1.6rem;
 
@@ -108,24 +113,16 @@ export default {
   `,
 
   postPreview: css`
+    width: 100%;
+    max-width: 72rem;
     height: 12em;
     padding: 0.8rem;
   `,
 
-  imageBuilder: css`
-    overflow: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding-bottom: 3.2rem;
-  `,
-
-  userDatabase: css`
-    max-width: 72rem;
-    padding-bottom: 3.2rem;
-  `,
-
+  /* User Database */
   userList: css`
+    width: 100%;
+    max-width: 72rem;
     table {
       width: 100%;
       border: 1px solid ${c.gray};
@@ -160,6 +157,7 @@ export default {
     }
   `,
 
+  /* Image Builder */
   uploader: css`
     label {
       ${button};
@@ -232,6 +230,9 @@ export default {
 
   split: css`
     display: flex;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
   `,
 
   cropper: css`
@@ -239,8 +240,8 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-width: 614px;
     margin-right: 1.6rem;
+    overflow: auto;
 
     button {
       display: inline-block;
@@ -255,7 +256,7 @@ export default {
 
   outputs: css`
     flex: 1;
-    min-width: 614px;
+    overflow: auto;
   `,
 
   output: css`

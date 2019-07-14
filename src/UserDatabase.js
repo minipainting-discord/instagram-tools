@@ -5,8 +5,8 @@ import { Icon } from "./ui"
 import styles from "./styles.css"
 
 const T = styles.tags(styled => ({
-  UserDatabase: styled.div(styles.userDatabase),
-  UserList: styled.ul(styles.userList),
+  UserDatabase: styled.div(styles.screen),
+  UserList: styled.div(styles.userList),
   SearchBox: styled.div(styles.userSearchBox),
 }))
 
@@ -21,7 +21,6 @@ class UserDatabase extends React.Component {
     const { filter } = this.state
     return (
       <T.UserDatabase>
-        <h1>Users</h1>
         <AppContext.Consumer>
           {({ users }) => (
             <T.UserList>

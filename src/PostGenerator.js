@@ -7,7 +7,7 @@ import { AppContext } from "./App"
 import styles from "./styles.css"
 
 const T = styles.tags(styled => ({
-  PostGenerator: styled.div(styles.postGenerator),
+  PostGenerator: styled.div(styles.screen),
   UserPicker: styled(({ value, onChange, className, users }) => (
     <div className={className}>
       <datalist id="userlist">
@@ -78,7 +78,6 @@ class PostGenerator extends React.Component {
         <AppContext.Consumer>
           {({ users }) => (
             <>
-              <h2>Post Generator</h2>
               <T.UserPicker
                 users={users}
                 value={username}
