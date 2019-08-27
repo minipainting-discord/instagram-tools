@@ -126,6 +126,7 @@ export default {
     table {
       width: 100%;
       border: 1px solid ${c.gray};
+      margin-bottom: 1rem;
     }
 
     td,
